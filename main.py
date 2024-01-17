@@ -15,7 +15,7 @@ def open_audio_file(file_path):
 def main():
     sound = open_audio_file("input/audio.mp3")
     fft_res = graph_wav_freq(sound.get_array_of_samples(), sound.frame_rate)
-    fft_flt = filter_fft(fft_res, sound.frame_rate, {4000: 1e9})
+    fft_flt = filter_fft(fft_res, sound.frame_rate, {440: 1e9, 880: 1e9, 1760: 1e9, 3520: 1e9, 7040: 1e9, 14080: 1e9})
     new_sig = irfft(fft_flt)
     graph_wav_freq(new_sig, sound.frame_rate, True)
 
