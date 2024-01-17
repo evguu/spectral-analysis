@@ -79,6 +79,11 @@ class FrequencyDomainRepresentation:
             self.fft_res[low_idx:high_idx] = self.fft_res[low_idx:high_idx]*boost_level
         return self
 
+    def multiband_boost(self, boost_array):
+        for i in range(len(boost_array)):
+            self.boost_note(i, boost_array[i])
+        return self
+
     def calculate_note_powers(self, text):
         results = [0 for i in range(12)]
         for semitones in range(12):
