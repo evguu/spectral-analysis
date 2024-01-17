@@ -3,6 +3,7 @@ from scipy.fft import rfft, rfftfreq, irfft
 import numpy as np
 from pydub import AudioSegment
 import matplotlib.pyplot as plt
+from math import log2, floor
 
 
 class TimeDomainRepresentation:
@@ -76,5 +77,31 @@ class FrequencyDomainRepresentation:
             high_idx = min(len(self.fft_res), high_note_border + half_fft_resolution)
 
             self.fft_res[low_idx:high_idx] = self.fft_res[low_idx:high_idx]*boost_level
+        return self
+
+    def calculate_note_powers(self, text):
+        results = [0 for i in range(12)]
+        for semitones in range(12):
+            target_frequencies = []
+            max_freq = self.sample_rate / 2
+            order = -3  # To reach low frequency notes too.
+            while True:
+                freq = self.reference_freq * 2 ** (semitones / 12 + order)
+                if freq >= max_freq:
+                    break
+                target_frequencies.append(freq)
+                order += 1
+
+            fft_bars_per_freq = len(self.fft_res) / max_freq
+            for freq in target_frequencies:
+                low_note_border = int(freq * fft_bars_per_freq * (2 ** -1 + 2 ** (-1 - 1 / 12)))
+                high_note_border = int(freq * fft_bars_per_freq * (2 ** -1 + 2 ** (-1 + 1 / 12)))
+                half_fft_resolution = int(fft_bars_per_freq / 2)
+
+                low_idx = max(0, low_note_border - half_fft_resolution)
+                high_idx = min(len(self.fft_res), high_note_border + half_fft_resolution)
+
+                results[semitones] += np.sum(np.abs(self.fft_res[low_idx:high_idx]))
+        print(text, [floor(log2(i + 1)*100)/100 for i in results])
         return self
 
