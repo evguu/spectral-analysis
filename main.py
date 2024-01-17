@@ -1,26 +1,16 @@
-# Given audio file path (mp3 or wav), load it and print the sample count.
-from pydub import AudioSegment
-from pydub.playback import play
-from scipy.fft import rfft, rfftfreq, irfft
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.io.wavfile import write
 
-
-def open_audio_file(file_path):
-    sound = AudioSegment.from_file(file_path, format="mp3")
-    return sound
+from fft_utils import TimeDomainRepresentation
 
 
 def main():
-    sound = open_audio_file("input/audio.mp3")
-    fft_res = graph_wav_freq(sound.get_array_of_samples(), sound.frame_rate)
-    fft_flt = filter_fft(fft_res, sound.frame_rate, {440: 1e9, 880: 1e9, 1760: 1e9, 3520: 1e9, 7040: 1e9, 14080: 1e9})
-    new_sig = irfft(fft_flt)
-    graph_wav_freq(new_sig, sound.frame_rate, True)
-
-    norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
-    write("output/clean.wav", sound.frame_rate, norm_new_sig)
+    sound = TimeDomainRepresentation()\
+        .load_from_mp3("input/audio.mp3")\
+        .to_frequency_domain()\
+        .to_time_domain()\
+        .normalize()\
+        .save_to_wav("output/clean.wav")
 
 
 def filter_fft(fft_res, sample_rate, modification_dict):
