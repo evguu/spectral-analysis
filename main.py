@@ -42,5 +42,6 @@ def graph_wav_freq(np_arr, sample_rate, enable_graph=False):
 
     return yf
 
+
 if __name__ == "__main__":
     main()
