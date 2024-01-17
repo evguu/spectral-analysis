@@ -57,7 +57,7 @@ class FrequencyDomainRepresentation:
     def boost_note(self, reference_freq, semitones, boost_level):
         target_frequencies = []
         max_freq = self.sample_rate / 2
-        order = 0
+        order = -3  # To reach low frequency notes too.
         while True:
             freq = reference_freq * 2 ** (semitones / 12 + order)
             if freq >= max_freq:
