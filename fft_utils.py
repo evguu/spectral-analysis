@@ -38,6 +38,17 @@ class TimeDomainRepresentation:
         return self
 
 
+def get_fletcher_munson_coefficient(frequency):
+    f = np.log10(frequency)
+
+    if -0.594 <= f <= 0.466:
+        return 10 * (f + 0.594)
+    elif 0.466 < f <= 1.160:
+        return 10 * (f - 0.466) ** 2 / (1 + 0.04 * (f - 0.466))
+    else:
+        return 10 * ((f - 1.160) ** 2 / (1 + 0.04 * (f - 1.160))) ** 0.5
+
+
 class FrequencyDomainRepresentation:
     def __init__(self, fft_res, sample_rate, sample_count, reference_freq=440):
         self.fft_res = fft_res
@@ -109,4 +120,3 @@ class FrequencyDomainRepresentation:
                 results[semitones] += np.sum(np.abs(self.fft_res[low_idx:high_idx]))
         print(text, [floor(log10(i + 1)*1000)/100 for i in results])
         return self
-
