@@ -1,13 +1,14 @@
 from fft_utils import TimeDomainRepresentation
+from chord_helper import ChordHelper
 
 
 def main():
     sound = TimeDomainRepresentation()\
-        .load_from_mp3("input/audio.mp3")
+        .load_from_mp3("input/rick.MP3")
 
     sound.to_frequency_domain()\
         .calculate_note_powers('Clean:') \
-        .multiband_boost([5, 0, 0, 0, 5, 0, 0, 5, 0, 0, 0, 0]) \
+        .multiband_boost(ChordHelper().set_note('C').min().get_notes()) \
         .calculate_note_powers('Boost:') \
         .to_time_domain()\
         .normalize()\
