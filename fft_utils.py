@@ -38,15 +38,23 @@ class TimeDomainRepresentation:
         return self
 
 
-def get_fletcher_munson_coefficient(frequency):
-    f = np.log10(frequency)
+def fletcher_munson_coefficient(frequencies):
+    # Convert frequencies to log scale
+    f = np.log10(frequencies)
 
-    if -0.594 <= f <= 0.466:
-        return 10 * (f + 0.594)
-    elif 0.466 < f <= 1.160:
-        return 10 * (f - 0.466) ** 2 / (1 + 0.04 * (f - 0.466))
-    else:
-        return 10 * ((f - 1.160) ** 2 / (1 + 0.04 * (f - 1.160))) ** 0.5
+    # Initialize output array
+    coefficients = np.zeros_like(f)
+
+    # Calculate Fletcher-Munson coefficient for each frequency
+    mask1 = (f >= -0.594) & (f <= 0.466)
+    mask2 = (f > 0.466) & (f <= 1.160)
+    mask3 = f > 1.160
+
+    coefficients[mask1] = 10 * (f[mask1] + 0.594)
+    coefficients[mask2] = 10 * (f[mask2] - 0.466) ** 2 / (1 + 0.04 * (f[mask2] - 0.466))
+    coefficients[mask3] = 10 * ((f[mask3] - 1.160) ** 2 / (1 + 0.04 * (f[mask3] - 1.160))) ** 0.5
+
+    return coefficients
 
 
 class FrequencyDomainRepresentation:
@@ -117,6 +125,8 @@ class FrequencyDomainRepresentation:
                 low_idx = max(0, low_note_border - half_fft_resolution)
                 high_idx = min(len(self.fft_res), high_note_border + half_fft_resolution)
 
-                results[semitones] += np.sum(np.abs(self.fft_res[low_idx:high_idx]))
+                cut = np.abs(self.fft_res[low_idx:high_idx])
+                inner_freqs = np.linspace(low_idx, high_idx, high_idx - low_idx) / fft_bars_per_freq
+                results[semitones] += np.sum(cut * fletcher_munson_coefficient(inner_freqs))
         print(text, [floor(log10(i + 1)*1000)/100 for i in results])
         return self
