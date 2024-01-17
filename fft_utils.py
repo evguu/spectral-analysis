@@ -76,7 +76,7 @@ class FrequencyDomainRepresentation:
             low_idx = max(0, low_note_border - half_fft_resolution)
             high_idx = min(len(self.fft_res), high_note_border + half_fft_resolution)
 
-            self.fft_res[low_idx:high_idx] = self.fft_res[low_idx:high_idx]*boost_level
+            self.fft_res[low_idx:high_idx] = self.fft_res[low_idx:high_idx]*(10 ** (boost_level / 10))
         return self
 
     def multiband_boost(self, boost_array):
