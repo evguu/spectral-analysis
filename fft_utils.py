@@ -22,7 +22,7 @@ class TimeDomainRepresentation:
 
     def load_from_mp3(self, input_file):
         sound = AudioSegment.from_file(input_file, format="mp3")
-        self.samples = sound.get_array_of_samples()
+        self.samples = np.array(sound.get_array_of_samples())
         self.sample_rate = sound.frame_rate
         return self
 
