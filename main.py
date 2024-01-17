@@ -30,13 +30,5 @@ def main():
         .save_to_wav("output/clean-7.wav")
 
 
-def filter_fft(fft_res, sample_rate, modification_dict):
-    points_per_freq = len(fft_res) / (sample_rate / 2)
-    for freq, amp in modification_dict.items():
-        target_idx = int(points_per_freq * freq)
-        fft_res[target_idx - 1: target_idx + 2] = amp
-    return fft_res
-
-
 if __name__ == "__main__":
     main()
