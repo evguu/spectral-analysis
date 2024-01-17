@@ -3,14 +3,31 @@ from fft_utils import TimeDomainRepresentation
 
 def main():
     sound = TimeDomainRepresentation()\
-        .load_from_mp3("input/audio.mp3") \
-        .to_frequency_domain()\
-        .graph(title='Source Signal Frequency Domain')\
-        .boost_note(reference_freq=440, semitones=2, boost_level=20) \
-        .graph(title='D-Boosted Signal Frequency Domain') \
+        .load_from_mp3("input/audio.mp3")
+
+    sound.to_frequency_domain()\
+        .boost_note(semitones=0, boost_level=5) \
+        .boost_note(semitones=4, boost_level=0) \
+        .boost_note(semitones=7, boost_level=0) \
         .to_time_domain()\
         .normalize()\
-        .save_to_wav("output/clean.wav")
+        .save_to_wav("output/clean-0.wav")
+
+    sound.to_frequency_domain()\
+        .boost_note(semitones=0, boost_level=0) \
+        .boost_note(semitones=4, boost_level=5) \
+        .boost_note(semitones=7, boost_level=0) \
+        .to_time_domain()\
+        .normalize()\
+        .save_to_wav("output/clean-4.wav")
+
+    sound.to_frequency_domain()\
+        .boost_note(semitones=0, boost_level=0) \
+        .boost_note(semitones=4, boost_level=0) \
+        .boost_note(semitones=7, boost_level=5) \
+        .to_time_domain()\
+        .normalize()\
+        .save_to_wav("output/clean-7.wav")
 
 
 def filter_fft(fft_res, sample_rate, modification_dict):
