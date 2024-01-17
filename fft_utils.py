@@ -53,3 +53,24 @@ class FrequencyDomainRepresentation:
         plt.plot(xf, np.abs(self.fft_res))
         plt.show()
         return self
+
+    def boost_note(self, reference_freq, semitones, boost_level):
+        target_frequencies = []
+        max_freq = self.sample_rate / 2
+        order = 0
+        while True:
+            freq = reference_freq * 2 ** (semitones / 12 + order)
+            if freq >= max_freq:
+                break
+            target_frequencies.append(freq)
+            order += 1
+
+        fft_bars_per_freq = len(self.fft_res) / max_freq
+        for freq in target_frequencies:
+            target_idx = int(fft_bars_per_freq * freq)
+            half_fft_resolution = int(fft_bars_per_freq / 2)
+            low_idx = max(0, target_idx - half_fft_resolution)
+            high_idx = min(len(self.fft_res), target_idx + half_fft_resolution)
+            self.fft_res[low_idx:high_idx] = self.fft_res[low_idx:high_idx]*boost_level
+        return self
+

@@ -6,6 +6,8 @@ def main():
         .load_from_mp3("input/audio.mp3") \
         .to_frequency_domain()\
         .graph(title='Source Signal Frequency Domain')\
+        .boost_note(reference_freq=440, semitones=2, boost_level=2) \
+        .graph(title='D-Boosted Signal Frequency Domain') \
         .to_time_domain()\
         .normalize()\
         .save_to_wav("output/clean.wav")
