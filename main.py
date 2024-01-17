@@ -3,9 +3,9 @@ from fft_utils import TimeDomainRepresentation
 
 def main():
     sound = TimeDomainRepresentation()\
-        .load_from_mp3("input/audio.mp3")\
+        .load_from_mp3("input/audio.mp3") \
         .to_frequency_domain()\
-        .graph()\
+        .graph(title='Source Signal Frequency Domain')\
         .to_time_domain()\
         .normalize()\
         .save_to_wav("output/clean.wav")

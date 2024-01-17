@@ -30,6 +30,12 @@ class TimeDomainRepresentation:
         self.samples = np.int16(self.samples * (32767 / self.samples.max()))
         return self
 
+    def graph(self, title):
+        plt.figure(num=title)
+        plt.plot(self.samples)
+        plt.show()
+        return self
+
 
 class FrequencyDomainRepresentation:
     def __init__(self, fft_res, sample_rate, sample_count):
@@ -41,8 +47,9 @@ class FrequencyDomainRepresentation:
         n = len(self.fft_res)
         return TimeDomainRepresentation(irfft(self.fft_res), self.sample_rate)
 
-    def graph(self):
+    def graph(self, title):
         xf = rfftfreq(self.sample_count, 1 / self.sample_rate)
+        plt.figure(num=title)
         plt.plot(xf, np.abs(self.fft_res))
         plt.show()
         return self
