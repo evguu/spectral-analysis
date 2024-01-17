@@ -2,5 +2,16 @@
 from pydub import AudioSegment
 from pydub.playback import play
 
-sound = AudioSegment.from_file("input/audio.mp3", format="mp3")
-play(sound)
+
+def open_audio_file(file_path):
+    sound = AudioSegment.from_file(file_path, format="mp3")
+    return sound
+
+
+def main():
+    sound = open_audio_file("input/audio.mp3")
+    play(sound)
+
+
+if __name__ == "__main__":
+    main()
