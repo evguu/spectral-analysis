@@ -8,7 +8,7 @@ def main():
 
     sound.to_frequency_domain()\
         .calculate_note_powers('Clean:') \
-        .multiband_boost(ChordHelper().set_note('C').min().get_notes()) \
+        .multiband_boost(ChordHelper(amplitude=5, resting=1).set_note('C#').chord('maj').get_notes()) \
         .calculate_note_powers('Boost:') \
         .to_time_domain()\
         .normalize()\

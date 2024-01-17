@@ -1,7 +1,8 @@
 class ChordHelper:
-    def __init__(self, amplitude=1):
+    def __init__(self, amplitude, resting):
         self.arr = [0 for i in range(12)]
         self.amplitude = amplitude
+        self.resting = resting
 
     def set_note(self, note_name):
         name_dict = {
@@ -23,43 +24,19 @@ class ChordHelper:
         return self
 
     def get_notes(self):
-        return self.arr * self.amplitude
+        return [self.amplitude if i else self.resting for i in self.arr]
 
-    def maj(self):
-        # Find root note (i), then set i + 4 and i + 7 to 1
+    def chord(self, chord_name):
+        chord_configs = {
+            'maj': [4, 7],
+            'min': [3, 7],
+            'dim': [3, 6],
+            'aug': [4, 8]
+        }
+
         for i in range(12):
             if self.arr[i] == 1:
-                self.arr[(i + 4) % 12] = 1
-                self.arr[(i + 7) % 12] = 1
+                for j in chord_configs[chord_name]:
+                    self.arr[(i + j) % 12] = 1
                 break
-
-        return self
-
-    def min(self):
-        # Find root note (i), then set i + 3 and i + 7 to 1
-        for i in range(12):
-            if self.arr[i] == 1:
-                self.arr[(i + 3) % 12] = 1
-                self.arr[(i + 7) % 12] = 1
-                break
-
-        return self
-
-    def dim(self):
-        # Find root note (i), then set i + 3 and i + 6 to 1
-        for i in range(12):
-            if self.arr[i] == 1:
-                self.arr[(i + 3) % 12] = 1
-                self.arr[(i + 6) % 12] = 1
-
-        return self
-
-    def aug(self):
-        # Find root note (i), then set i + 4 and i + 8 to 1
-        for i in range(12):
-            if self.arr[i] == 1:
-                self.arr[(i + 4) % 12] = 1
-                self.arr[(i + 8) % 12] = 1
-                break
-
         return self
