@@ -1,6 +1,4 @@
-def main():
-    pass
+# Given audio file path (mp3 or wav), load it and print the sample count.
+import pydub
 
 
-if __name__ == '__main__':
-    main()
