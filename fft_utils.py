@@ -3,7 +3,7 @@ from scipy.fft import rfft, rfftfreq, irfft
 import numpy as np
 from pydub import AudioSegment
 import matplotlib.pyplot as plt
-from math import log2, floor
+from math import log10, floor
 
 
 class TimeDomainRepresentation:
@@ -102,6 +102,6 @@ class FrequencyDomainRepresentation:
                 high_idx = min(len(self.fft_res), high_note_border + half_fft_resolution)
 
                 results[semitones] += np.sum(np.abs(self.fft_res[low_idx:high_idx]))
-        print(text, [floor(log2(i + 1)*100)/100 for i in results])
+        print(text, [floor(log10(i + 1)*1000)/100 for i in results])
         return self
 
