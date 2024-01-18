@@ -21,8 +21,8 @@ class TimeDomainRepresentation:
         write(output_file, self.sample_rate, self.samples)
         return self
 
-    def load_from_mp3(self, input_file):
-        sound = AudioSegment.from_file(input_file, format="mp3")
+    def load_from(self, input_file, format):
+        sound = AudioSegment.from_file(input_file, format=format)
         self.samples = np.array(sound.get_array_of_samples())
         self.sample_rate = sound.frame_rate
         return self
@@ -38,25 +38,6 @@ class TimeDomainRepresentation:
         return self
 
 
-def fletcher_munson_coefficient(frequencies):
-    # Convert frequencies to log scale
-    f = np.log10(frequencies)
-
-    # Initialize output array
-    coefficients = np.zeros_like(f)
-
-    # Calculate Fletcher-Munson coefficient for each frequency
-    mask1 = (f >= -0.594) & (f <= 0.466)
-    mask2 = (f > 0.466) & (f <= 1.160)
-    mask3 = f > 1.160
-
-    coefficients[mask1] = 10 * (f[mask1] + 0.594)
-    coefficients[mask2] = 10 * (f[mask2] - 0.466) ** 2 / (1 + 0.04 * (f[mask2] - 0.466))
-    coefficients[mask3] = 10 * ((f[mask3] - 1.160) ** 2 / (1 + 0.04 * (f[mask3] - 1.160))) ** 0.5
-
-    return coefficients
-
-
 class FrequencyDomainRepresentation:
     def __init__(self, fft_res, sample_rate, sample_count, reference_freq=440):
         self.fft_res = fft_res
@@ -64,15 +45,14 @@ class FrequencyDomainRepresentation:
         self.sample_count = sample_count
         self.reference_freq = reference_freq
 
-    def to_time_domain(self):
-        n = len(self.fft_res)
-        return TimeDomainRepresentation(irfft(self.fft_res), self.sample_rate)
+    def to_time_domain(self, leave_every=1):
+        return TimeDomainRepresentation(irfft(self.fft_res)[::leave_every], int(self.sample_rate/leave_every))
 
     def graph(self, title):
         xf = rfftfreq(self.sample_count, 1 / self.sample_rate)
         plt.figure(num=title)
-        plt.plot(xf, np.abs(self.fft_res))
-        plt.show()
+        plt.plot(xf, np.log10(np.abs(self.fft_res)) * 10)
+        plt.show(block=False)
         return self
 
     def boost_note(self, semitones, boost_level):
@@ -127,6 +107,6 @@ class FrequencyDomainRepresentation:
 
                 cut = np.abs(self.fft_res[low_idx:high_idx])
                 inner_freqs = np.linspace(low_idx, high_idx, high_idx - low_idx) / fft_bars_per_freq
-                results[semitones] += np.sum(cut * fletcher_munson_coefficient(inner_freqs))
+                results[semitones] += np.sum(cut)
         print(text, [floor(log10(i + 1)*1000)/100 for i in results])
         return self

@@ -3,19 +3,17 @@ from chord_helper import ChordHelper
 
 
 def main():
-    sound = TimeDomainRepresentation()\
-        .load_from_mp3("input/rick.MP3")
-
-    sound.to_frequency_domain()\
-        .calculate_note_powers('Clean:') \
-        .multiband_boost(ChordHelper(amplitude=-500, resting=0).set_note('C#').chord('maj').get_notes()) \
-        .calculate_note_powers('Boost:') \
-        .to_time_domain()\
-        .normalize()\
+    TimeDomainRepresentation()\
+        .load_from("input/rick.MP3", 'mp3')\
+        .to_frequency_domain()\
+        .calculate_note_powers('Initial')\
+        .to_time_domain(leave_every=5)\
         .save_to_wav("output/clean-0.wav")
 
-    sound.normalize()\
-        .save_to_wav("output/src.wav")
+    TimeDomainRepresentation() \
+        .load_from("output/clean-0.wav", 'wav') \
+        .to_frequency_domain() \
+        .calculate_note_powers('Modified')
 
 
 if __name__ == "__main__":
